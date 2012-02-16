@@ -50,20 +50,6 @@ class GoatTest(unittest.TestCase):
         for instance in TestModel.find():
             self.assertEqual(instance.test, 3)
 
-    def test_in_place_update(self):
-        """
-        Test to see if the database behaves properly when inserting items in
-        the table we are iterating over.
-        """
-        for instance in self.instances:
-            instance.save()
-
-        for counter, instance in enumerate(TestModel.find()):
-            TestModel().save(False)
-            self.assertLess(counter, 100)
-
-        self.assertEqual(len(list(TestModel.find())), 6)
-
     def test_delete(self):
         for instance in self.instances:
             instance.save()
