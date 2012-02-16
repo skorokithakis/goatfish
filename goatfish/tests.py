@@ -35,6 +35,22 @@ class GoatTest(unittest.TestCase):
         self.assertEqual(len(instances), 3)
         self.assertEqual(instances, self.instances)
 
+    def test_find_by(self):
+        for instance in self.instances:
+            instance.save()
+
+        instances = list(TestModel.find({"foo": "hello"}))
+        self.assertEqual(len(instances), 2)
+
+        instances = list(TestModel.find({"foo": 1}))
+        self.assertEqual(len(instances), 1)
+
+        instances = list(TestModel.find({"bar": "hi"}))
+        self.assertEqual(len(instances), 2)
+
+        instances = list(TestModel.find({"bar": None}))
+        self.assertEqual(len(instances), 1)
+
     def test_update(self):
         self.assertEqual(len(list(TestModel.find())), 0)
 
