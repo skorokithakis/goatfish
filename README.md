@@ -107,8 +107,6 @@ miss rows when querying on indexes that are not ready yet. To populate indexes,
 go through the objects in your model and perform a save() in each of them.
 Convenience functions to populate single indexes will be provided shortly.
 
-Caveat: The code for indexes hasn't been pushed yet, it will be very soon.
-
 License
 -------
 
