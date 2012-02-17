@@ -103,6 +103,15 @@ class GoatTest(unittest.TestCase):
         for instance in self.instances:
             instance.save()
 
+        instances = list(self.TestModel.find({"id": self.instances[0].id}))
+        self.assertEqual(instances, self.instances[0:1])
+
+        instances = list(self.TestModel.find({"id": self.instances[0].id, "foo": 1}))
+        self.assertEqual(instances, self.instances[0:1])
+
+        instances = list(self.TestModel.find({"id": self.instances[0].id, "foo": 2}))
+        self.assertEqual(instances, [])
+
         instances = list(self.TestModel.find({"foo": "hello"}))
         self.assertEqual(instances, self.instances[1:])
 

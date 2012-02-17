@@ -74,20 +74,30 @@ class Model(object):
         if parameters is None:
             parameters = {}
             index = []
+        elif "id" in parameters:
+            index = ["id"]
         else:
             index = cls._get_largest_index(parameters.keys())
 
+        table_name = cls.__name__.lower()
         if not index:
             # Look through every row.
-            statement = """SELECT * FROM %s;""" % cls.__name__.lower()
+            statement = """SELECT * FROM %s;""" % table_name
             cursor.execute(statement)
+        elif index == ["id"]:
+            # If the object id is in the parameters, use only that, since it's
+            # the fastest thing we can do.
+            print "Lookup by ID."
+            statement = """SELECT * FROM %s WHERE uuid=?;""" % table_name
+            cursor.execute(statement, (parameters["id"],))
+            del parameters["id"]
         else:
             statement = """SELECT x.id, x.uuid, x.data FROM
                 %(table_name)s x INNER JOIN %(index_name)s y
                 ON x.uuid = y.uuid
                 WHERE %(query)s;""" % {
-                    "table_name": cls.__name__.lower(),
-                    "index_name": cls.__name__.lower() + "_" + "_".join(index),
+                    "table_name": table_name,
+                    "index_name": table_name + "_" + "_".join(index),
                     "query": " = ? AND ".join(index) + " = ?",
                 }
             cursor.execute(statement, [parameters[value] for value in index])
