@@ -63,6 +63,18 @@ class Model(object):
         return instance
 
     @classmethod
+    def find_one(cls, parameters=None):
+        """
+        Return just one item.
+        """
+        generator = cls.find(parameters)
+        try:
+            item = generator.next()
+        except StopIteration:
+            item = None
+        return item
+
+    @classmethod
     def find(cls, parameters=None):
         """
         Query the database.
@@ -87,7 +99,6 @@ class Model(object):
         elif index == ["id"]:
             # If the object id is in the parameters, use only that, since it's
             # the fastest thing we can do.
-            print "Lookup by ID."
             statement = """SELECT * FROM %s WHERE uuid=?;""" % table_name
             cursor.execute(statement, (parameters["id"],))
             del parameters["id"]

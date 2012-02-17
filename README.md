@@ -75,6 +75,12 @@ To use ``goatfish``, all you need to do is create a class that inherits from
     >>> [test.bar for test in Test.find({"bar": "hello", "baz": "hi"})]
     []
 
+    >>> Test.find_one({"bar": "hello"}).foo
+    "hi"
+
+    >>> print(Test.find_one({"bar": "doesn't exist"}))
+    None
+
     # Delete the element.
     >>> foo.delete()
 

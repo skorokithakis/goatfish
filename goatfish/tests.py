@@ -99,6 +99,25 @@ class GoatTest(unittest.TestCase):
         self.assertEqual(len(instances), 3)
         self.assertEqual(instances, self.instances)
 
+    def test_find_one(self):
+        for instance in self.instances:
+            instance.save()
+
+        instance = self.TestModel.find_one({"id": self.instances[0].id})
+        self.assertEqual(instance, self.instances[0])
+
+        instance = self.TestModel.find_one({"foo": "hello"})
+        self.assertEqual(instance, self.instances[1])
+
+        instance = self.TestModel.find_one({"bar": "hi"})
+        self.assertEqual(instance, self.instances[0])
+
+        instance = self.TestModel.find_one({"baz": True})
+        self.assertEqual(instance, self.instances[0])
+
+        instance = self.TestModel.find_one({"baz": "nope"})
+        self.assertTrue(instance is None)
+
     def test_find_by(self):
         for instance in self.instances:
             instance.save()
