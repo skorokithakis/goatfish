@@ -18,20 +18,8 @@ a schemaless layer over MySQL, which is pretty significant validation:
 
 http://backchannel.org/blog/friendfeed-schemaless-mysql
 
-Installation
-------------
+[![Build Status](https://secure.travis-ci.org/stochastic-technologies/goatfish.png?branch=master)](http://travis-ci.org/stochastic-technologies/goatfish)
 
-To install ``goatfish`` you need:
-
-* Python 2.5 or later in the 2.x line (3.x and earlier than 2.5 not tested).
-
-You have multiple options of installation:
-
-* With pip (preferred), do ``pip install goatfish``.
-* With setuptools, do ``easy_install goatfish``.
-* To install the source, download it from
-  https://github.com/stochastic-technologies/goatfish/ and do
-  ``python setup.py install``.
 
 Usage
 -----
@@ -112,6 +100,23 @@ Right now, new indexes are only populated with data on save(), so you might
 miss rows when querying on indexes that are not ready yet. To populate indexes,
 go through the objects in your model and perform a save() in each of them.
 Convenience functions to populate single indexes will be provided shortly.
+
+
+Installation
+------------
+
+To install ``goatfish`` you need:
+
+* Python 2.5 or later in the 2.x line (3.x and earlier than 2.5 not tested).
+
+You have multiple options of installation:
+
+* With pip (preferred), do ``pip install goatfish``.
+* With setuptools, do ``easy_install goatfish``.
+* To install the source, download it from
+  https://github.com/stochastic-technologies/goatfish/ and do
+  ``python setup.py install``.
+
 
 License
 -------
