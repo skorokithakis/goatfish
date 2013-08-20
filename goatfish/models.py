@@ -69,7 +69,7 @@ class Model(object):
         """
         generator = cls.find(parameters)
         try:
-            item = generator.next()
+            item = next(generator)
         except StopIteration:
             item = None
         return item
@@ -119,7 +119,8 @@ class Model(object):
                 del parameters[field]
 
         for id, uuid, data in cursor:
-            loaded_dict = cls._serializer.loads(data.encode("utf-8"))
+            encoded_data = data if type(data) is bytes else data.encode("utf-8")
+            loaded_dict = cls._serializer.loads(encoded_data)
             loaded_dict["id"] = uuid
 
             if parameters:
