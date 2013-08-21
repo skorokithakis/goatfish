@@ -70,6 +70,8 @@ class Model(object):
         generator = cls.find(parameters)
         try:
             item = next(generator)
+        except NameError:
+            item = generator.next()
         except StopIteration:
             item = None
         return item
