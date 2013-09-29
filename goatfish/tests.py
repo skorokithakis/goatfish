@@ -1,5 +1,4 @@
 import unittest
-import sqlite3
 
 import models
 
@@ -158,7 +157,7 @@ class GoatTest(unittest.TestCase):
         for instance in self.instances:
             instance.save()
 
-        for instance in self.TestModel.find():
+        for instance in list(self.TestModel.find()):
             instance.test = 3
             instance.save()
 
@@ -171,7 +170,7 @@ class GoatTest(unittest.TestCase):
         for instance in self.instances:
             instance.save()
 
-        for instance in self.TestModel.find():
+        for instance in list(self.TestModel.find()):
             instance.delete()
 
         instances = list(self.TestModel.find())
