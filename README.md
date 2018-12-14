@@ -1,6 +1,10 @@
 Description
 ===========
 
+[![Build Status](https://secure.travis-ci.org/stochastic-technologies/goatfish.png?branch=master)](http://travis-ci.org/stochastic-technologies/goatfish)
+[![Code Shelter](https://www.codeshelter.co/static/badges/badge-flat.svg)](https://www.codeshelter.co/)
+
+
 ``goatfish`` is a small, schemaless ORM that is backed by SQLite.
 
 It's also this:
@@ -17,8 +21,6 @@ It appears that this method is identical to what FriendFeed used to implement
 a schemaless layer over MySQL, which is pretty significant validation:
 
 http://backchannel.org/blog/friendfeed-schemaless-mysql
-
-[![Build Status](https://secure.travis-ci.org/stochastic-technologies/goatfish.png?branch=master)](http://travis-ci.org/stochastic-technologies/goatfish)
 
 
 Usage
