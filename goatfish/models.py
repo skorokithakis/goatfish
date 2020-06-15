@@ -1,5 +1,4 @@
 import pickle
-import sqlite3
 import uuid
 
 
@@ -40,7 +39,11 @@ class Model(object):
         # Compare each index set to the field set only if it contains all parameters.
         # XXX: If the database can use partial indexes, we might not need to only
         # select subsets of the parameters here.
-        coverage = [(len(field_set - index[0]), index[1]) for index in indexes if field_set >= index[0]]
+        coverage = [
+            (len(field_set - index[0]), index[1])
+            for index in indexes
+            if field_set >= index[0]
+        ]
 
         if not coverage:
             return []
@@ -50,7 +53,8 @@ class Model(object):
 
     @classmethod
     def _get_cursor(cls):
-        if cls.Meta.connection is None: raise RuntimeError("Cannot proceed without a database connection.")
+        if cls.Meta.connection is None:
+            raise RuntimeError("Cannot proceed without a database connection.")
         return cls.Meta.connection.cursor()
 
     @classmethod
@@ -91,7 +95,7 @@ class Model(object):
         elif "id" in parameters:
             index = ["id"]
         else:
-            index = cls._get_largest_index(parameters.keys())
+            index = cls._get_largest_index(list(parameters.keys()))
 
         table_name = cls.__name__.lower()
         if not index:
@@ -109,10 +113,10 @@ class Model(object):
                 %(table_name)s x INNER JOIN %(index_name)s y
                 ON x.uuid = y.uuid
                 WHERE %(query)s;""" % {
-                    "table_name": table_name,
-                    "index_name": table_name + "_" + "_".join(index),
-                    "query": " = ? AND ".join(index) + " = ?",
-                }
+                "table_name": table_name,
+                "index_name": table_name + "_" + "_".join(index),
+                "query": " = ? AND ".join(index) + " = ?",
+            }
             cursor.execute(statement, [parameters[value] for value in index])
 
             # Delete the (now) unnecessary parameters, because the database
@@ -120,14 +124,17 @@ class Model(object):
             for field in index:
                 del parameters[field]
 
-        for id, uuid, data in cursor:
+        for id, uu, data in cursor:
             encoded_data = data if type(data) is bytes else data.encode("utf-8")
             loaded_dict = cls._serializer.loads(encoded_data)
-            loaded_dict["id"] = uuid
+            loaded_dict["id"] = uu
 
             if parameters:
                 # If there are fields left to match, match them.
-                if all((loaded_dict.get(field, None) == parameters[field]) for field in parameters):
+                if all(
+                    (loaded_dict.get(field, None) == parameters[field])
+                    for field in parameters
+                ):
                     yield cls._unmarshal(loaded_dict)
             else:
                 # Otherwise, just return the object.
@@ -139,13 +146,21 @@ class Model(object):
         Create the necessary tables in the database.
         """
         cursor = cls._get_cursor()
-        cursor.execute("""CREATE TABLE IF NOT EXISTS %s ( "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "uuid" TEXT NOT NULL, "data" BLOB NOT NULL);""" % cls.__name__.lower())
-        cursor.execute("""CREATE UNIQUE INDEX IF NOT EXISTS "%s_uuid_index" on %s (uuid ASC)""" % (cls.__name__.lower(), cls.__name__.lower()))
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS %s ( "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "uuid" TEXT NOT NULL, "data" BLOB NOT NULL);"""
+            % cls.__name__.lower()
+        )
+        cursor.execute(
+            """CREATE UNIQUE INDEX IF NOT EXISTS "%s_uuid_index" on %s (uuid ASC)"""
+            % (cls.__name__.lower(), cls.__name__.lower())
+        )
 
         for index in cls.Meta.indexes:
             # Create an index table.
             table_name = "%s_%s" % (cls.__name__.lower(), "_".join(index))
-            statement = """CREATE TABLE IF NOT EXISTS %s ( "uuid" TEXT NOT NULL""" % table_name
+            statement = (
+                """CREATE TABLE IF NOT EXISTS %s ( "uuid" TEXT NOT NULL""" % table_name
+            )
             for field in index:
                 statement += """, "%s" TEXT""" % field
             statement += ")"
@@ -153,9 +168,12 @@ class Model(object):
 
             # Create the index table index.
             fields = " ASC, ".join(index)
-            statement = """CREATE INDEX IF NOT EXISTS "%s_index" on %s (%s ASC)""" % (table_name, table_name, fields)
+            statement = """CREATE INDEX IF NOT EXISTS "%s_index" on %s (%s ASC)""" % (
+                table_name,
+                table_name,
+                fields,
+            )
             cursor.execute(statement)
-
 
     @classmethod
     def commit(cls):
@@ -195,7 +213,11 @@ class Model(object):
         values.insert(0, self.id)
 
         # Construct the SQL statement.
-        statement = """INSERT OR REPLACE INTO %s ("uuid", "%s") VALUES (%s);""" % (table_name, '", "'.join(field_names), ("?, " * len(values))[:-2])
+        statement = """INSERT OR REPLACE INTO %s ("uuid", "%s") VALUES (%s);""" % (
+            table_name,
+            '", "'.join(field_names),
+            ("?, " * len(values))[:-2],
+        )
 
         cursor.execute(statement, values)
 
@@ -207,15 +229,25 @@ class Model(object):
 
         if self.__dict__.get("id", None) is None:
             object_id = uuid.uuid4().hex
-            statement = """INSERT INTO %s ("uuid", "data") VALUES (?, ?)""" % self.__class__.__name__.lower()
-            cursor.execute(statement, (object_id, self._serializer.dumps(self.__dict__)))
+            statement = (
+                """INSERT INTO %s ("uuid", "data") VALUES (?, ?)"""
+                % self.__class__.__name__.lower()
+            )
+            cursor.execute(
+                statement, (object_id, self._serializer.dumps(self.__dict__))
+            )
         else:
             # Temporarily delete the id so it doesn't get stored.
             object_id = self.id
             del self.id
 
-            statement = """UPDATE %s SET "data" = ? WHERE "uuid" = ?""" % self.__class__.__name__.lower()
-            cursor.execute(statement, (self._serializer.dumps(self.__dict__), object_id))
+            statement = (
+                """UPDATE %s SET "data" = ? WHERE "uuid" = ?"""
+                % self.__class__.__name__.lower()
+            )
+            cursor.execute(
+                statement, (self._serializer.dumps(self.__dict__), object_id)
+            )
 
         # Restore the id.
         self.id = object_id
@@ -235,17 +267,24 @@ class Model(object):
         # Get the name of the main table.
         table_names = [self.__class__.__name__.lower()]
         # The names of all the index tables.
-        table_names.extend([result[0] for result in self._get_index_table_names(self.Meta.indexes)])
+        table_names.extend(
+            [result[0] for result in self._get_index_table_names(self.Meta.indexes)]
+        )
 
         # And delete the rows from all of them.
         for table_name in table_names:
             statement = """DELETE FROM %s WHERE "uuid" == ?""" % table_name
-            cursor.execute(statement, (self.id, ))
+            cursor.execute(statement, (self.id,))
 
         if commit:
             self.commit()
 
+    def __str__(self) -> str:
+        return "<%s: %s>" % (self.__class__.__name__, self.__dict__)
+
+    def __repr__(self) -> str:
+        return str(self)
+
     class Meta:
         connection = None
         indexes = ()
-

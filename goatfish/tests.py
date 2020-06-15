@@ -1,5 +1,5 @@
-import unittest
 import sqlite3
+import unittest
 
 import models
 
@@ -13,7 +13,7 @@ class GoatTest(unittest.TestCase):
                 indexes = (
                     ("foo",),
                     ("foo", "bar"),
-            )
+                )
 
         self.TestModel = TestModel
         self.TestModel.initialize()
@@ -66,14 +66,19 @@ class GoatTest(unittest.TestCase):
             instance.save()
 
         indexes = self.TestModel._get_index_table_names(self.TestModel.Meta.indexes)
-        self.assertEqual(indexes,
-            [("testmodel_foo", ("foo",)), ("testmodel_foo_bar", ("foo", "bar"))])
+        self.assertEqual(
+            indexes,
+            [("testmodel_foo", ("foo",)), ("testmodel_foo_bar", ("foo", "bar"))],
+        )
 
         connection = self.TestModel.Meta.connection
 
         # Check that all the index tables have been created properly.
         for table_name, index in indexes:
-            results = connection.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?;", (table_name,))
+            results = connection.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=?;",
+                (table_name,),
+            )
             self.assertEqual(len(results.fetchall()), 1)
 
         # Test that they have data in them.
@@ -178,5 +183,5 @@ class GoatTest(unittest.TestCase):
         self.assertEqual(instances, [])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
