@@ -50,25 +50,25 @@ To use ``goatfish``, all you need to do is create a class that inherits from
     foo.save()
 
     # Retrieve all elements.
-    >>> [test.bar for test in Test.find()]
+    >>> [test.bar for test in Test.alll()]
     ['hello']
 
     # Run a query with parameters (slow, loads every item from the DB to check it).
-    >>> [test.bar for test in Test.find({"bar": "hello"})]
+    >>> [test.bar for test in Test.find(bar="hello")]
     ['hello']
 
     # This uses an index, so it's fast.
-    >>> [test.foo for test in Test.find({"foo": "hi"})]
+    >>> [test.foo for test in Test.find(foo="hi"})]
     ['hi']
 
     # Run a query with a parameter that doesn't exist in the dataset.
-    >>> [test.bar for test in Test.find({"bar": "hello", "baz": "hi"})]
+    >>> [test.bar for test in Test.find({bar="hello", baz="hi"})]
     []
 
-    >>> Test.find_one({"bar": "hello"}).foo
+    >>> Test.find_one(bar="hello").foo
     "hi"
 
-    >>> print(Test.find_one({"bar": "doesn't exist"}))
+    >>> print(Test.find_one(bar="doesn't exist"))
     None
 
     # Delete the element.
@@ -109,13 +109,13 @@ Installation
 
 To install ``goatfish`` you need:
 
-* Python 2.5 or later in the 2.x line (3.x and earlier than 2.5 not tested).
+* Python 2.7 or later.
 
-You have multiple options of installation:
+You have multiple options for installation:
 
 * With pip (preferred), do ``pip install goatfish``.
 * With setuptools, do ``easy_install goatfish``.
-* To install the source, download it from
+* To install from source, download it from
   https://github.com/stochastic-technologies/goatfish/ and do
   ``python setup.py install``.
 
@@ -124,4 +124,3 @@ License
 -------
 
 ``goatfish`` is distributed under the BSD license.
-
