@@ -109,7 +109,7 @@ Installation
 
 To install ``goatfish`` you need:
 
-* Python 2.7 or later.
+* Python 3.4 or later.
 
 You have multiple options for installation:
 
