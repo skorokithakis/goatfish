@@ -17,3 +17,12 @@ repos:
   rev: v0.780
   hooks:
   - id: mypy
+- repo: local
+  hooks:
+  - id: gitchangelog
+    language: system
+    always_run: true
+    pass_filenames: false
+    name: Generate changelog
+    entry: bash -c "gitchangelog > CHANGELOG.md"
+    stages: [commit]
