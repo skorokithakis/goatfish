@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "goatfish"
-version = "0.1.0"
+version = "2.0.0a0"
 description = "A small, schemaless ORM that is backed by SQLite."
 authors = ["Stavros Korokithakis <hi@stavros.io>"]
 license = "BSD-2-Clause"
