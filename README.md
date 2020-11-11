@@ -32,10 +32,12 @@ To use ``goatfish``, all you need to do is create a class that inherits from
     import goatfish
     import sqlite3
 
+    db_connection = sqlite3.connect(":memory:")
+
     class Test(goatfish.Model):
         class Meta:
             # This is so we know where to connect.
-            connection = sqlite3.connect(":memory:")
+            connection = db_connection
             indexes = (
                 ("foo",),
                 ("foo", "bar"),
