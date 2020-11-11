@@ -55,6 +55,17 @@ class GoatTest(unittest.TestCase):
         instance = self.TestModel.find_one(**{"baz": "nope"})
         self.assertTrue(instance is None)
 
+    def test_count(self):
+        for instance in self.instances:
+            instance.save()
+
+        self.assertEqual(self.TestModel.count(), 3)
+        self.assertEqual(self.TestModel.count(foo="hello"), 2)
+        self.assertEqual(self.TestModel.count(foo="hi"), 0)
+        self.assertEqual(self.TestModel.count(id=1), 1)
+        self.assertEqual(self.TestModel.count(bar=None), 1)
+        self.assertEqual(self.TestModel.count(baz=None), 1)
+
     def test_find_by(self):
         for instance in self.instances:
             instance.save()

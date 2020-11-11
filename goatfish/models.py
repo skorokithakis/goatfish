@@ -32,37 +32,54 @@ class Model:
         return item
 
     @classmethod
-    def find(cls, **parameters):
-        """
-        Query the database.
-        """
-        cursor = cls._get_cursor()
+    def _prepare_select_statement(cls, parameters, select_cols="*"):
         table_name = cls.__name__.lower()
 
-        param_list = parameters.items()
-
         if parameters:
+            param_list = parameters.items()
             if "id" in parameters:
                 id = parameters.pop("id")
-                statement = "SELECT * FROM %s WHERE %s" % (
+                statement = "SELECT %s FROM %s WHERE %s" % (
+                    select_cols,
                     table_name,
                     " AND ".join(
                         ["id = ?"]
                         + ["json_extract(data, '$.%s') = ?" % i[0] for i in param_list]
                     ),
                 )
-                cursor.execute(statement, [id] + [i[1] for i in param_list])
+                return statement, [id] + [i[1] for i in param_list]
             else:
-                statement = "SELECT * FROM %s WHERE %s" % (
+                statement = "SELECT %s FROM %s WHERE %s" % (
+                    select_cols,
                     table_name,
                     " AND ".join(
                         "json_extract(data, '$.%s') = ?" % i[0] for i in param_list
                     ),
                 )
-                cursor.execute(statement, [i[1] for i in param_list])
+                return statement, [i[1] for i in param_list]
         else:
-            statement = "SELECT * FROM %s" % (table_name,)
-            cursor.execute(statement)
+            statement = "SELECT %s FROM %s" % (select_cols, table_name)
+            return statement, ()
+
+    @classmethod
+    def count(cls, **parameters):
+        """
+        Query the database for rows.
+        """
+        cursor = cls._get_cursor()
+        statement, parameters = cls._prepare_select_statement(parameters, "COUNT(1)")
+        cursor.execute(statement, parameters)
+
+        return cursor.fetchone()[0]
+
+    @classmethod
+    def find(cls, **parameters):
+        """
+        Query the database for rows.
+        """
+        cursor = cls._get_cursor()
+        statement, parameters = cls._prepare_select_statement(parameters)
+        cursor.execute(statement, parameters)
 
         for id, data in cursor:
             loaded_dict = json.loads(data)
@@ -140,7 +157,6 @@ class Model:
             # Temporarily delete the id so it doesn't get stored.
             object_id = self.id
             del self.id
-
             statement = (
                 """UPDATE %s SET "data" = ? WHERE "id" = ?"""
                 % self.__class__.__name__.lower(),

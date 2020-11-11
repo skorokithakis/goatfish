@@ -50,8 +50,12 @@ To use ``goatfish``, all you need to do is create a class that inherits from
     foo.save()
 
     # Retrieve all elements.
-    >>> [test.bar for test in Test.alll()]
+    >>> [test.bar for test in Test.all()]
     ['hello']
+
+    # Count the number of elements.
+    >>> Test.count(foo="hi")
+    1
 
     # Run a query with parameters (slow, loads every item from the DB to check it).
     >>> [test.bar for test in Test.find(bar="hello")]
