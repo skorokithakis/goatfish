@@ -64,7 +64,7 @@ class GoatTest(unittest.TestCase):
         self.assertEqual(self.TestModel.count(foo="hi"), 0)
         self.assertEqual(self.TestModel.count(id=1), 1)
         self.assertEqual(self.TestModel.count(bar=None), 1)
-        self.assertEqual(self.TestModel.count(baz=None), 1)
+        self.assertEqual(self.TestModel.count(baz=None), 0)
 
     def test_find_by(self):
         for instance in self.instances:
@@ -92,7 +92,7 @@ class GoatTest(unittest.TestCase):
         self.assertEqual(instances, self.instances[0:1])
 
         instances = list(self.TestModel.find(**{"bar": None}))
-        self.assertEqual(instances, [])
+        self.assertEqual(instances, self.instances[2:3])
 
         instances = list(self.TestModel.find(**{"baz": True}))
         self.assertEqual(instances, self.instances[0:1])

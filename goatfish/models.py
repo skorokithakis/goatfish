@@ -44,7 +44,7 @@ class Model:
                     table_name,
                     " AND ".join(
                         ["id = ?"]
-                        + ["json_extract(data, '$.%s') = ?" % i[0] for i in param_list]
+                        + ["json_extract(data, '$.%s') IS ?" % i[0] for i in param_list]
                     ),
                 )
                 return statement, [id] + [i[1] for i in param_list]
@@ -53,7 +53,7 @@ class Model:
                     select_cols,
                     table_name,
                     " AND ".join(
-                        "json_extract(data, '$.%s') = ?" % i[0] for i in param_list
+                        "json_extract(data, '$.%s') IS ?" % i[0] for i in param_list
                     ),
                 )
                 return statement, [i[1] for i in param_list]
