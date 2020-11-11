@@ -145,7 +145,10 @@ class Model:
         """
         cursor = self._get_cursor()
 
-        if self.__dict__.get("id", None) is None:
+        # Temporarily delete the id so it doesn't get stored, if it exists.
+        object_id = self.__dict__.pop("id", None)
+
+        if object_id is None:
             statement = (
                 """INSERT INTO %s ("data") VALUES (?)"""
                 % self.__class__.__name__.lower()
@@ -154,9 +157,6 @@ class Model:
             new_id = cursor.lastrowid
             self.id = new_id
         else:
-            # Temporarily delete the id so it doesn't get stored.
-            object_id = self.id
-            del self.id
             statement = (
                 """UPDATE %s SET "data" = ? WHERE "id" = ?"""
                 % self.__class__.__name__.lower(),
