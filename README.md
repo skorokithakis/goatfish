@@ -9,7 +9,7 @@ Description
 
 It's also this:
 
-![A goatfish](http://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Parupeneus_insularis_.jpg/300px-Parupeneus_insularis_.jpg)
+![A goatfish](https://upload.wikimedia.org/wikipedia/commons/d/da/Parupeneus_insularis.jpg)
 
 Its usage is very simple, just have your classes inherit from ``goatfish.Model``
 and and specify a connection, and the goatfish methods are available to you.
