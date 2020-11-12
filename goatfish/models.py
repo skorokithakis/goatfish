@@ -159,8 +159,7 @@ class Model:
         else:
             statement = (
                 """UPDATE %s SET "data" = ? WHERE "id" = ?"""
-                % self.__class__.__name__.lower(),
-                object_id,
+                % self.__class__.__name__.lower()
             )
             cursor.execute(statement, (json.dumps(self.__dict__), object_id))
 
