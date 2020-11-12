@@ -32,15 +32,15 @@ class Model:
         return item
 
     @classmethod
-    def _prepare_select_statement(cls, parameters, select_cols="*"):
+    def _prepare_statement(cls, parameters, verb="SELECT *"):
         table_name = cls.__name__.lower()
 
         if parameters:
             param_list = parameters.items()
             if "id" in parameters:
                 id = parameters.pop("id")
-                statement = "SELECT %s FROM %s WHERE %s" % (
-                    select_cols,
+                statement = "%s FROM %s WHERE %s" % (
+                    verb,
                     table_name,
                     " AND ".join(
                         ["id = ?"]
@@ -49,8 +49,8 @@ class Model:
                 )
                 return statement, [id] + [i[1] for i in param_list]
             else:
-                statement = "SELECT %s FROM %s WHERE %s" % (
-                    select_cols,
+                statement = "%s FROM %s WHERE %s" % (
+                    verb,
                     table_name,
                     " AND ".join(
                         "json_extract(data, '$.%s') IS ?" % i[0] for i in param_list
@@ -58,7 +58,7 @@ class Model:
                 )
                 return statement, [i[1] for i in param_list]
         else:
-            statement = "SELECT %s FROM %s" % (select_cols, table_name)
+            statement = "%s FROM %s" % (verb, table_name)
             return statement, ()
 
     @classmethod
@@ -67,7 +67,7 @@ class Model:
         Query the database for rows.
         """
         cursor = cls._get_cursor()
-        statement, parameters = cls._prepare_select_statement(parameters, "COUNT(1)")
+        statement, parameters = cls._prepare_statement(parameters, "SELECT COUNT(1)")
         cursor.execute(statement, parameters)
 
         return cursor.fetchone()[0]
@@ -78,7 +78,7 @@ class Model:
         Query the database for rows.
         """
         cursor = cls._get_cursor()
-        statement, parameters = cls._prepare_select_statement(parameters)
+        statement, parameters = cls._prepare_statement(parameters)
         cursor.execute(statement, parameters)
 
         for id, data in cursor:

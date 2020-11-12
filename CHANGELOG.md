@@ -11,6 +11,8 @@
 
 ### Fixes
 
+* Fix update crash. [Stavros Korokithakis]
+
 * Fix bug where null fields could not be looked up. [Stavros Korokithakis]
 
 * Fix bug where the id was sometimes stored in the database. [Stavros Korokithakis]
