@@ -185,9 +185,8 @@ class Model:
             self.commit()
 
     def __str__(self) -> str:
-        d = self.__dict__
-        d.pop("id", None)
-        id = getattr(self, "id", None)
+        d = self.__dict__.copy()
+        id = d.pop("id", None)
         return "<%s (%s): %s>" % (self.__class__.__name__, id, self.__dict__)
 
     def __repr__(self) -> str:
