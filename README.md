@@ -67,6 +67,10 @@ To use ``goatfish``, all you need to do is create a class that inherits from
     >>> [test.foo for test in Test.find(foo="hi"})]
     ['hi']
 
+    # Fast, because there's an index for when both fields are used together.
+    >>> [test.bar for test in Test.find(foo="hi", bar="hello")]
+    ['hello']
+
     # Run a query with a parameter that doesn't exist in the dataset.
     >>> [test.bar for test in Test.find({bar="hello", baz="hi"})]
     []

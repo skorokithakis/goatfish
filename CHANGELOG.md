@@ -11,6 +11,8 @@
 
 ### Fixes
 
+* Don't clear the ID when printing an object as a string. [Stavros Korokithakis]
+
 * Fix update crash. [Stavros Korokithakis]
 
 * Fix bug where null fields could not be looked up. [Stavros Korokithakis]
