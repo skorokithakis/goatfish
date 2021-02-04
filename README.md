@@ -39,8 +39,8 @@ To use ``goatfish``, all you need to do is create a class that inherits from
             # This is so we know where to connect.
             connection = db_connection
             indexes = (
-                ("foo",),
-                ("foo", "bar"),
+                ("foo",), # Index with only foo field
+                ("foo", "bar"), # Index joined from the both fields
             )
 
     # Create the necessary tables. If they exist, do nothing.
