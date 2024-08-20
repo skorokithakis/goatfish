@@ -29,65 +29,66 @@ Usage
 To use ``goatfish``, all you need to do is create a class that inherits from
 ``goatfish.Model``:
 
-    import goatfish
-    import sqlite3
+```python
+import goatfish
+import sqlite3
 
-    db_connection = sqlite3.connect(":memory:")
+db_connection = sqlite3.connect(":memory:")
 
-    class Test(goatfish.Model):
-        class Meta:
-            # This is so we know where to connect.
-            connection = db_connection
-            indexes = (
-                ("foo",), # Index on just `foo`.
-                ("foo", "bar"), # Index on both `foo` and `bar`, together.
-            )
+class Test(goatfish.Model):
+    class Meta:
+        # This is so we know where to connect.
+        connection = db_connection
+        indexes = (
+            ("foo",), # Index on just `foo`.
+            ("foo", "bar"), # Index on both `foo` and `bar`, together.
+        )
 
-    # Create the necessary tables. If they exist, do nothing.
-    Test.initialize()
+# Create the necessary tables. If they exist, do nothing.
+Test.initialize()
 
-    foo = Test()
-    foo.foo = "hi"
-    foo.bar = "hello"
-    foo.save()
+foo = Test()
+foo.foo = "hi"
+foo.bar = "hello"
+foo.save()
 
-    # Retrieve all elements.
-    >>> [test.bar for test in Test.all()]
-    ['hello']
+# Retrieve all elements.
+>>> [test.bar for test in Test.all()]
+['hello']
 
-    # Count the number of elements.
-    >>> Test.count(foo="hi")
-    1
+# Count the number of elements.
+>>> Test.count(foo="hi")
+1
 
-    # Run a query with parameters (slow, loads every item from the DB to check it).
-    >>> [test.bar for test in Test.find(bar="hello")]
-    ['hello']
+# Run a query with parameters (slow, loads every item from the DB to check it).
+>>> [test.bar for test in Test.find(bar="hello")]
+['hello']
 
-    # This uses an index, so it's fast.
-    >>> [test.foo for test in Test.find(foo="hi"})]
-    ['hi']
+# This uses an index, so it's fast.
+>>> [test.foo for test in Test.find(foo="hi"})]
+['hi']
 
-    # Fast, because there's an index for when both fields are used together.
-    >>> [test.bar for test in Test.find(foo="hi", bar="hello")]
-    ['hello']
+# Fast, because there's an index for when both fields are used together.
+>>> [test.bar for test in Test.find(foo="hi", bar="hello")]
+['hello']
 
-    # Run a query with a parameter that doesn't exist in the dataset.
-    >>> [test.bar for test in Test.find({bar="hello", baz="hi"})]
-    []
+# Run a query with a parameter that doesn't exist in the dataset.
+>>> [test.bar for test in Test.find({bar="hello", baz="hi"})]
+[]
 
-    >>> Test.find_one(bar="hello").foo
-    "hi"
+>>> Test.find_one(bar="hello").foo
+"hi"
 
-    >>> print(Test.find_one(bar="doesn't exist"))
-    None
+>>> print(Test.find_one(bar="doesn't exist"))
+None
 
-    # Delete the element.
-    >>> foo.delete()
+# Delete the element.
+>>> foo.delete()
 
-    # Try to retrieve all elements again.
-    >>> [test.bar for test in Test.find()]
-    []
-
+# Try to retrieve all elements again.
+>>> [test.bar for test in Test.find()]
+[]
+```
 
 Indexes
 -------
